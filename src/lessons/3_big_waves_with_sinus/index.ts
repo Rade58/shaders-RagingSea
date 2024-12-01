@@ -6,8 +6,8 @@ import { OrbitControls } from "three/examples/jsm/Addons.js";
 import waterVertexShader from "./water/vertex.glsl";
 import waterFragmentShader from "./water/fragment.glsl";
 
-// ---------- ShaderMaterial ----------
-
+// ----------  ----------
+// uniform we passed are also changable with gui
 // ------------------------------------
 // ------------ gui -------------------
 
@@ -100,6 +100,14 @@ if (canvas) {
     // wireframe: true,
     vertexShader: waterVertexShader,
     fragmentShader: waterFragmentShader,
+    uniforms: {
+      uBigWavesAmplitude: {
+        value: 0.2,
+      },
+      uBigWavesFrequency: {
+        value: new THREE.Vector2(4, 1.5),
+      },
+    },
   });
 
   /* const material = new THREE.ShaderMaterial({
@@ -137,6 +145,28 @@ if (canvas) {
     .min(0)
     .max(15)
     .step(0.001); */
+
+  gui
+    .add(material.uniforms["uBigWavesAmplitude"], "value")
+    // .name("big Waves Amplitude")
+    .name("uBigWavesAmplitude")
+    // .min(-1)
+    .min(0)
+    .max(1)
+    .step(0.001);
+
+  gui
+    .add(material.uniforms["uBigWavesFrequency"].value, "x")
+    .name("uFrequency x")
+    .min(0)
+    .max(20)
+    .step(0.001);
+  gui
+    .add(material.uniforms["uBigWavesFrequency"].value, "y")
+    .name("uFrequency y")
+    .min(0)
+    .max(15)
+    .step(0.001);
 
   // -------------------------------------------------------------
   // -------------------------------------------------------------
