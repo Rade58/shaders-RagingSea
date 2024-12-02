@@ -96,12 +96,28 @@ void main(){
   
   // 
   // ------------------------------------------------------
- 
-  elevation -= abs(cnoise(vec3(modelPosition.xz * 3.0, uTime * 0.2)) * 0.15);
+  // we added this and it is working
+  // for(float i = 1.0; i <= 3.0; i++){
+    // elevation -= abs(cnoise(vec3(modelPosition.xz * 3.0, uTime * 0.2)) * 0.15);
+  // }
+
+  // but we added perlin nose to same frequency two times
+  // the thing we want is to add it for different frequencies
+
+  // we will use i to decrease the elevation and to increase the frequency
+
+  for(float i = 1.0; i <= 3.0; i++){
+    elevation -= abs(cnoise(vec3(modelPosition.xz * 3.0 * i, uTime * 0.2)) * 0.15/ i);
+  }
 
 
   // ------------------------------------------------------
   // ------------------------------------------------------
+  
+  // elevation -= abs(cnoise(vec3(modelPosition.xz * 3.0, uTime * 0.2)) * 0.15);
+
+
+  
 
   
   modelPosition.y += elevation;
