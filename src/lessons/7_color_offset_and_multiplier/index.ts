@@ -6,10 +6,12 @@ import { OrbitControls } from "three/examples/jsm/Addons.js";
 import waterVertexShader from "./water/vertex.glsl";
 import waterFragmentShader from "./water/fragment.glsl";
 
-// ----------  ----------
-// uniforms we passed are also changable with gui
-// and they are uniforms for the amplitude and frequency
-// for frequency we pass Vector2
+// ---------- Colors 2  ----------
+// Previous example but I decided to add more
+// uniforms
+// for multiplier and offset (of the third argument of color mix)
+// ofcourse we will also change these with gui
+
 // ------------------------------------
 // ------------ gui -------------------
 
@@ -24,7 +26,8 @@ const gui = new GUI({
 //  gui parmeters
 
 const guiParameters = {
-  //
+  depthColor: "#0000ff",
+  surfaceColor: "#8888ff",
 };
 // gui.hide()
 // ----------------------------------
@@ -98,7 +101,7 @@ if (canvas) {
   // wireframe: true,
   // });
 
-  const material = new THREE.ShaderMaterial({
+  const waterMaterial = new THREE.ShaderMaterial({
     // wireframe: true,
     vertexShader: waterVertexShader,
     fragmentShader: waterFragmentShader,
@@ -108,6 +111,21 @@ if (canvas) {
       },
       uBigWavesFrequency: {
         value: new THREE.Vector2(4, 1.5),
+      },
+      uTime: {
+        value: 0,
+      },
+      uBigWavesSpeed: {
+        value: 0.75,
+      },
+      uDepthColor: { value: new THREE.Color(guiParameters.depthColor) },
+      uSurfaceColor: { value: new THREE.Color(guiParameters.surfaceColor) },
+      // added these two
+      uColorMultiplier: {
+        value: 2,
+      },
+      uColorOffset: {
+        value: 0.2,
       },
     },
   });
@@ -125,7 +143,7 @@ if (canvas) {
     // },
   }); */
 
-  const mesh = new THREE.Mesh(geometry, material);
+  const mesh = new THREE.Mesh(geometry, waterMaterial);
 
   // mesh.scale.y = 2 / 3;
 
@@ -149,7 +167,7 @@ if (canvas) {
     .step(0.001); */
 
   gui
-    .add(material.uniforms["uBigWavesAmplitude"], "value")
+    .add(waterMaterial.uniforms["uBigWavesAmplitude"], "value")
     // .name("big Waves Amplitude")
     .name("uBigWavesAmplitude")
     // .min(-1)
@@ -158,16 +176,50 @@ if (canvas) {
     .step(0.001);
 
   gui
-    .add(material.uniforms["uBigWavesFrequency"].value, "x")
+    .add(waterMaterial.uniforms["uBigWavesFrequency"].value, "x")
     .name("uFrequency x")
     .min(0)
     .max(20)
     .step(0.001);
   gui
-    .add(material.uniforms["uBigWavesFrequency"].value, "y")
+    .add(waterMaterial.uniforms["uBigWavesFrequency"].value, "y")
     .name("uFrequency y")
     .min(0)
     .max(15)
+    .step(0.001);
+
+  gui
+    .add(waterMaterial.uniforms["uBigWavesSpeed"], "value")
+    .name("uBigWavesSpeed")
+    .min(0)
+    .max(4)
+    .step(0.001);
+
+  gui.addColor(guiParameters, "depthColor").onChange((val: string) => {
+    // (waterMaterial.uniforms["uDepthColor"].value as THREE.Color).setStyle(val);
+    (waterMaterial.uniforms["uDepthColor"].value as THREE.Color).set(val);
+  });
+  gui.addColor(guiParameters, "surfaceColor").onChange((val: string) => {
+    /* (waterMaterial.uniforms["uSurfaceColor"].value as THREE.Color).setStyle(
+      val
+    ); */
+    (waterMaterial.uniforms["uSurfaceColor"].value as THREE.Color).set(val);
+  });
+
+  // added these
+
+  gui
+    .add(waterMaterial.uniforms["uColorMultiplier"], "value")
+    .name("uColorMultiplier")
+    .min(0)
+    .max(10)
+    .step(0.001);
+
+  gui
+    .add(waterMaterial.uniforms["uColorOffset"], "value")
+    .name("uColorOffset")
+    .min(0)
+    .max(1.0)
     .step(0.001);
 
   // -------------------------------------------------------------
@@ -331,13 +383,13 @@ if (canvas) {
   // ---------------------------------------------------------
   // ---------------------------------------------------------
 
-  // const clock = new THREE.Clock();
+  const clock = new THREE.Clock();
 
   function tick() {
-    // const elapsed = clock.getElapsedTime();
+    const elapsed = clock.getElapsedTime();
     // const delta = clock.getDelta();
 
-    // material.uniforms["uTime"].value = elapsed;
+    waterMaterial.uniforms["uTime"].value = elapsed;
 
     // for dumping to work
     orbit_controls.update();

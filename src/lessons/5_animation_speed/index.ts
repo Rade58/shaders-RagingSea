@@ -7,9 +7,8 @@ import waterVertexShader from "./water/vertex.glsl";
 import waterFragmentShader from "./water/fragment.glsl";
 
 // ----------  ----------
-// uniforms we passed are also changable with gui
-// and they are uniforms for the amplitude and frequency
-// for frequency we pass Vector2
+// animation speed as uniform
+// we will also control speed with gui
 // ------------------------------------
 // ------------ gui -------------------
 
@@ -98,7 +97,7 @@ if (canvas) {
   // wireframe: true,
   // });
 
-  const material = new THREE.ShaderMaterial({
+  const waterMaterial = new THREE.ShaderMaterial({
     // wireframe: true,
     vertexShader: waterVertexShader,
     fragmentShader: waterFragmentShader,
@@ -108,6 +107,12 @@ if (canvas) {
       },
       uBigWavesFrequency: {
         value: new THREE.Vector2(4, 1.5),
+      },
+      uTime: {
+        value: 0,
+      },
+      uBigWavesSpeed: {
+        value: 0.75,
       },
     },
   });
@@ -125,7 +130,7 @@ if (canvas) {
     // },
   }); */
 
-  const mesh = new THREE.Mesh(geometry, material);
+  const mesh = new THREE.Mesh(geometry, waterMaterial);
 
   // mesh.scale.y = 2 / 3;
 
@@ -149,7 +154,7 @@ if (canvas) {
     .step(0.001); */
 
   gui
-    .add(material.uniforms["uBigWavesAmplitude"], "value")
+    .add(waterMaterial.uniforms["uBigWavesAmplitude"], "value")
     // .name("big Waves Amplitude")
     .name("uBigWavesAmplitude")
     // .min(-1)
@@ -158,16 +163,23 @@ if (canvas) {
     .step(0.001);
 
   gui
-    .add(material.uniforms["uBigWavesFrequency"].value, "x")
+    .add(waterMaterial.uniforms["uBigWavesFrequency"].value, "x")
     .name("uFrequency x")
     .min(0)
     .max(20)
     .step(0.001);
   gui
-    .add(material.uniforms["uBigWavesFrequency"].value, "y")
+    .add(waterMaterial.uniforms["uBigWavesFrequency"].value, "y")
     .name("uFrequency y")
     .min(0)
     .max(15)
+    .step(0.001);
+
+  gui
+    .add(waterMaterial.uniforms["uBigWavesSpeed"], "value")
+    .name("uBigWavesSpeed")
+    .min(0)
+    .max(4)
     .step(0.001);
 
   // -------------------------------------------------------------
@@ -331,13 +343,13 @@ if (canvas) {
   // ---------------------------------------------------------
   // ---------------------------------------------------------
 
-  // const clock = new THREE.Clock();
+  const clock = new THREE.Clock();
 
   function tick() {
-    // const elapsed = clock.getElapsedTime();
+    const elapsed = clock.getElapsedTime();
     // const delta = clock.getDelta();
 
-    // material.uniforms["uTime"].value = elapsed;
+    waterMaterial.uniforms["uTime"].value = elapsed;
 
     // for dumping to work
     orbit_controls.update();

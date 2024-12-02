@@ -6,10 +6,26 @@ import { OrbitControls } from "three/examples/jsm/Addons.js";
 import waterVertexShader from "./water/vertex.glsl";
 import waterFragmentShader from "./water/fragment.glsl";
 
-// ----------  ----------
-// uniforms we passed are also changable with gui
-// and they are uniforms for the amplitude and frequency
-// for frequency we pass Vector2
+// ---------- Colors ----------
+// we want to set different color depending on the amplitude
+// I think
+// so it would be easier to see the dept or elevation
+
+// we will tweak some things with help of `guiParameters`
+// object so we will be able to change colors with gui
+
+// rule of thumb
+// if you want your project to look good you should be able
+// to debug colors with the gui since there is a lot
+// color combinations and you can't pick the right ones
+// without using gui since with gui is much easier
+
+// we will have two color properties
+// depthColor    and    surfaceColor
+
+// and two uniforms
+// uDepthColor    and    uSurfaceColor
+
 // ------------------------------------
 // ------------ gui -------------------
 
@@ -24,7 +40,8 @@ const gui = new GUI({
 //  gui parmeters
 
 const guiParameters = {
-  //
+  depthColor: "#0000ff",
+  surfaceColor: "#8888ff",
 };
 // gui.hide()
 // ----------------------------------
@@ -98,7 +115,7 @@ if (canvas) {
   // wireframe: true,
   // });
 
-  const material = new THREE.ShaderMaterial({
+  const waterMaterial = new THREE.ShaderMaterial({
     // wireframe: true,
     vertexShader: waterVertexShader,
     fragmentShader: waterFragmentShader,
@@ -109,6 +126,15 @@ if (canvas) {
       uBigWavesFrequency: {
         value: new THREE.Vector2(4, 1.5),
       },
+      uTime: {
+        value: 0,
+      },
+      uBigWavesSpeed: {
+        value: 0.75,
+      },
+      // here ate the color uniforms
+      uDepthColor: { value: new THREE.Color(guiParameters.depthColor) },
+      uSurfaceColor: { value: new THREE.Color(guiParameters.surfaceColor) },
     },
   });
 
@@ -125,7 +151,7 @@ if (canvas) {
     // },
   }); */
 
-  const mesh = new THREE.Mesh(geometry, material);
+  const mesh = new THREE.Mesh(geometry, waterMaterial);
 
   // mesh.scale.y = 2 / 3;
 
@@ -149,7 +175,7 @@ if (canvas) {
     .step(0.001); */
 
   gui
-    .add(material.uniforms["uBigWavesAmplitude"], "value")
+    .add(waterMaterial.uniforms["uBigWavesAmplitude"], "value")
     // .name("big Waves Amplitude")
     .name("uBigWavesAmplitude")
     // .min(-1)
@@ -158,17 +184,40 @@ if (canvas) {
     .step(0.001);
 
   gui
-    .add(material.uniforms["uBigWavesFrequency"].value, "x")
+    .add(waterMaterial.uniforms["uBigWavesFrequency"].value, "x")
     .name("uFrequency x")
     .min(0)
     .max(20)
     .step(0.001);
   gui
-    .add(material.uniforms["uBigWavesFrequency"].value, "y")
+    .add(waterMaterial.uniforms["uBigWavesFrequency"].value, "y")
     .name("uFrequency y")
     .min(0)
     .max(15)
     .step(0.001);
+
+  gui
+    .add(waterMaterial.uniforms["uBigWavesSpeed"], "value")
+    .name("uBigWavesSpeed")
+    .min(0)
+    .max(4)
+    .step(0.001);
+
+  // for colors
+  gui.addColor(guiParameters, "depthColor").onChange((val: string) => {
+    // i tried like this
+    // (waterMaterial.uniforms["uDepthColor"].value as THREE.Color).setStyle(val);
+    // but author of the workshop did this
+    (waterMaterial.uniforms["uDepthColor"].value as THREE.Color).set(val);
+  });
+  gui.addColor(guiParameters, "surfaceColor").onChange((val: string) => {
+    // I tried like this
+    /* (waterMaterial.uniforms["uSurfaceColor"].value as THREE.Color).setStyle(
+      val
+    ); */
+    // but author of the workshop did this
+    (waterMaterial.uniforms["uSurfaceColor"].value as THREE.Color).set(val);
+  });
 
   // -------------------------------------------------------------
   // -------------------------------------------------------------
@@ -331,13 +380,13 @@ if (canvas) {
   // ---------------------------------------------------------
   // ---------------------------------------------------------
 
-  // const clock = new THREE.Clock();
+  const clock = new THREE.Clock();
 
   function tick() {
-    // const elapsed = clock.getElapsedTime();
+    const elapsed = clock.getElapsedTime();
     // const delta = clock.getDelta();
 
-    // material.uniforms["uTime"].value = elapsed;
+    waterMaterial.uniforms["uTime"].value = elapsed;
 
     // for dumping to work
     orbit_controls.update();
