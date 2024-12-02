@@ -10,6 +10,15 @@ import waterFragmentShader from "./water/fragment.glsl";
 // in a raging sea the waves look more chaotic with different and
 // unpredictable frequencies
 // we will apply noise at higher frequencies
+
+// we will use for loop in vertex shader since
+// we want to apply more perlin noise at different frequencies
+
+// we want to be able to tweak how many iteration of perlin noise
+// we want to apply
+
+// sometimes you tend to have troubles when using for loop
+// but we'll make things work
 // ------------------------------------
 // ------------ gui -------------------
 
