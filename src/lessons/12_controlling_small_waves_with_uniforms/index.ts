@@ -244,7 +244,6 @@ if (canvas) {
   gui
     .add(waterMaterial.uniforms["uSmallWavesAmplitude"], "value")
     .name("uSmallWavesAmplitude")
-    // .min(-1)
     .min(0)
     .max(1)
     .step(0.001);
@@ -253,7 +252,7 @@ if (canvas) {
     .add(waterMaterial.uniforms["uSmallWavesFrequency"], "value")
     .name("uSmallWavesFrequency")
     .min(0)
-    .max(20)
+    .max(30)
     .step(0.001);
   gui
     .add(waterMaterial.uniforms["uSmallWavesSpeed"], "value")

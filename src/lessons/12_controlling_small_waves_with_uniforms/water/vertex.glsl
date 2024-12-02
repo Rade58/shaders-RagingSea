@@ -104,12 +104,12 @@ void main(){
   
   // elevation -= abs(cnoise(vec3(modelPosition.xz * 3.0, uTime * 0.2)) * 0.15);
 
-  // without uniforms
+  // here is without uniforms we commented out
   // for(float i = 1.0; i <= 4.0; i++){
   //    elevation -= abs(cnoise(vec3(modelPosition.xz * 3.0 * i, uTime * 0.2)) * 0.15/ i);
   // }  
 
-  // and these are with uniforms
+  // and these are with uniforms we just added
   for(float i = 1.0; i <= uSmallWavesIteration; i++){
     elevation -= 
       abs(
@@ -122,6 +122,7 @@ void main(){
         * uSmallWavesAmplitude / i
       );
   }
+  // -----------------------------------------------------
   // -----------------------------------------------------
 
   modelPosition.y += elevation;
